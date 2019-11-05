@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Cash Register</title>
+  </head>
+  <body>
+    <h1>Cash Register</h1>
+
+    <div class="main-content">
+      <form>
+        <fieldset>
+          <legend>Cash in Drawer</legend>
+          <p>Enter how much of each type of currency is in the cash drawer</p>
+
+          <div class="flex-container">
+            <div class="flex-item">
+              <label for="penny" class="currency_label">Penny</label>
+              <input type="text" id="penny">
+            </div>
+            <div class="flex-item">
+              <label for="nickel" class="currency_label">Nickel</label>
+              <input type="text" id="nickel">
+            </div>
+            <div class="flex-item">
+              <label for="dime" class="currency_label">Dime</label>
+              <input type="text" id="dime">
+            </div>
+            <div class="flex-item">
+              <label for="quarter" class="currency_label">Quarter</label>
+              <input type="text" id="quarter">
+            </div>
+            <div class="flex-item">
+              <label for="one" class="currency_label">One</label>
+              <input type="text" id="one">
+            </div>
+            <div class="flex-item">
+              <label for="five" class="currency_label">Five</label>
+              <input type="text" id="five">
+            </div>
+            <div class="flex-item">
+              <label for="ten" class="currency_label">Ten</label>
+              <input type="text" id="ten">
+            </div>
+            <div class="flex-item">
+              <label for="twenty" class="currency_label">Twenty</label>
+              <input type="text" id="twenty">
+            </div>
+            <div class="flex-item">
+              <label for="hundred" class="currency_label">Hundred</label>
+              <input type="text" id="hundred">
+            </div>
+          </div>  <!-- End .flex-container -->
+        </fieldset>
+
+        <div class="flex-container">
+          <div class="flex-item">
+            <label for="price">Total Amount Due</label>
+            <input type="text" id="price" required>
+          </div>
+          <div class="flex-item">
+            <label for="cash">Amount Paid</label>
+            <input type="text" id="cash" required>
+          </div>
+          <button type="submit" id="calculate">Calculate Change</button>
+        </div>  <!-- End .flex-container -->
+
+      </form>
+
+      <button type="button" id="clear">Clear Change History</button>
+      <ul id="change_list"></ul>
+    </div>  <!-- End .main-content -->
+
+    <footer>
+      <p class="author">
+        Created by Vivian S for <a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/javascript-algorithms-and-data-structures-projects/cash-register" target="_blank">freeCodeCamp</a>
+      </p>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
