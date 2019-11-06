@@ -8,9 +8,9 @@ body {
   flex-direction: column;
   min-height: 100vh;
   margin: 0px;
-  padding-top: 10px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding-top: 5px;
+  padding-right: 5px;
+  padding-left: 5px;
   background: lavender;
   font-family: verdana;
 }
@@ -61,22 +61,19 @@ input {
   border-radius: 5px;
 }
 
+output {
+  padding: 5px;
+}
+
 button {
+  margin-top: 20px;
+  margin-left: 10px;
   padding: 10px;
   border-radius: 5px;
   background: mediumpurple;
   color: gold;
   font-family: 'Comic Sans MS';
   font-weight: bold;
-}
-
-#calculate {
-  margin-left: 10px;
-}
-
-#clear {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 ul {

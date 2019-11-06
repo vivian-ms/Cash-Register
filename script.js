@@ -13,6 +13,22 @@ var currency_value = {
 var cid = [];
 
 $(function() {
+  $('output').val('$0');
+
+  // Update total monetary value of currency on input
+  $('fieldset input').on('input', function(evt) {
+    if( $(this).val() ) {
+      $(this).next().val(`$${($(this).val() * currency_value[$(this).attr('id')]).toFixed(2)}`);
+    } else {
+      $(this).next().val('$0');
+    }
+  });
+
+  $('#clear_currency').on('click', function(evt) {
+    $('fieldset input').val('');
+    $('output').val('$0');
+  });
+
   $('form').on('submit', function(evt) {
     evt.preventDefault();
 
@@ -22,7 +38,8 @@ $(function() {
   $('#clear').on('click', function(evt) {
     $('#change_list').empty();
   });
-});
+});  // End ready()
+
 
 
 function getCID() {
@@ -39,10 +56,11 @@ function getCID() {
     } else {
       array.push( [$(currency).attr('id'), 0] );
     }
-  }
+  }  // End for loop
 
   return array;
-}
+}  // End getCID()
+
 
 
 function getChangeList(change) {
@@ -50,14 +68,14 @@ function getChangeList(change) {
 
   for (let i = 0; i < change.length; i++) {
     if (i === 0) {
-      change_list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: ${change[i][1]}`;
+      change_list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
     } else {
-      change_list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: ${change[i][1]}`;
+      change_list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
     }
   }
 
   return change_list;
-}
+}  // End getChangeList()
 
 
 
@@ -108,4 +126,6 @@ function checkCashRegister(price, cash, cid) {
       $('#change_list').append('<li>Not enough funds to return change</li>');
     }
   }  // End else cash in drawer > change
-}
+
+  $('#price, #cash').val('');
+}  // End checkCashRegister()
