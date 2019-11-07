@@ -15,18 +15,18 @@ var cid = [];
 $(function() {
   $('output').val('$0');
 
+  // Calculate and display total cash in drawer
+  cashInDrawer(cid);
+
   // Update total monetary value of currency on input
   $('fieldset input').on('input', function(evt) {
-    if( $(this).val() ) {
-      $(this).next().val(`$${($(this).val() * currency_value[$(this).attr('id')]).toFixed(2)}`);
-    } else {
-      $(this).next().val('$0');
-    }
+    cid = getCID();
   });
 
   $('#clear_currency').on('click', function(evt) {
-    $('fieldset input').val('');
+    $('input').val('');
     $('output').val('$0');
+    cid = getCID();
   });
 
   $('form').on('submit', function(evt) {
@@ -43,6 +43,7 @@ $(function() {
 
 
 function getCID() {
+  // 1) Calculate the total monetary value of each currency
   let array = [];
 
   for (let i = 0; i < $('fieldset input').length; i++) {
@@ -53,28 +54,48 @@ function getCID() {
       let currency_amount = Number ( ($(currency).val() * currency_value[currency_name]).toFixed(2) );
 
       array.push( [currency_name, currency_amount] );
+
+      // Display total monetary value of currency
+      $(currency).next().val( `$${currency_amount}` );
     } else {
       array.push( [$(currency).attr('id'), 0] );
+
+      // Display monetary value of currency
+      $(currency).next().val('$0');
     }
   }  // End for loop
+
+  // 2) Calculate and display the total cash in drawer
+  cashInDrawer(array);
 
   return array;
 }  // End getCID()
 
 
+function cashInDrawer(array) {
+  // 1) Calculate total cash in drawer
+  let total = Number( array.reduce((total, currency) => total + currency[1], 0).toFixed(2) );
+
+  // 2) Display total cash in drawer
+  $('#total_cash').text( `$${total}` );
+
+  return total;
+}  // End cashInDrawer()
+
+
 
 function getChangeList(change) {
-  let change_list = '';
+  let list = '';
 
   for (let i = 0; i < change.length; i++) {
     if (i === 0) {
-      change_list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
+      list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
     } else {
-      change_list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
+      list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
     }
   }
 
-  return change_list;
+  return list;
 }  // End getChangeList()
 
 
@@ -83,7 +104,7 @@ function checkCashRegister(price, cash, cid) {
   let change = Number( (cash - price).toFixed(2) );
 
   // Get total cash in drawer
-  let drawer = Number( cid.reduce((total, currency) => total + currency[1], 0).toFixed(2) );
+  let drawer = cashInDrawer(cid);
 
   // If cash in drawer < change
   if (drawer < change) {

@@ -45,6 +45,10 @@ legend {
   margin: 5px;
 }
 
+fieldset .flex-item {
+  flex-basis: 235px;
+}
+
 label {
   margin-right: 10px;
   padding: 5px;
@@ -74,6 +78,10 @@ button {
   color: gold;
   font-family: 'Comic Sans MS';
   font-weight: bold;
+}
+
+#clear_currency {
+  margin-left: 0px;
 }
 
 ul {
