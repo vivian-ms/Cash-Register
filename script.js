@@ -10,12 +10,12 @@ var currency_value = {
   hundred: 100
 };
 
-var cid = [];
+var cid = [];  // cid = [ [Name of currency, # of currency, total monetary value of currency] ]
 
 $(function() {
   // Only allow number input and backspace
   $('input').on('keypress', function(evt) {
-    if ( !(evt.key === 'Enter' || (evt.key >= 0 && evt.key <= 9)) ) {
+    if ( !(evt.key === 'Enter' || evt.key === '.' || (evt.key >= 0 && evt.key <= 9)) ) {
       evt.preventDefault();
     }
   });
@@ -55,7 +55,11 @@ $(function() {
   $('form').on('submit', function(evt) {
     evt.preventDefault();
 
-    checkCashRegister( Number( $('#price').val() ), Number( $('#cash').val() ), getCID() );
+    checkCashRegister(
+      Number( $('#price').val() ),
+      Number( $('#cash').val() ),
+      getCID()
+    );
   });
 
   $('#clear').on('click', function(evt) {
@@ -66,9 +70,9 @@ $(function() {
 
 
 function getCID() {
-  // 1) Calculate the total monetary value of each currency
-  let array = [];
+  let array = [];  // array = [ [Name of currency, # of currency, total monetary value of currency] ]
 
+  // 1) Calculate the total monetary value of each currency
   for (let i = 0; i < $('fieldset input').length; i++) {
     let currency = $('fieldset input')[i];
     let currency_name = $(currency).attr('id');
@@ -76,12 +80,16 @@ function getCID() {
     if ($(currency).val()) {
       let currency_amount = Number ( ($(currency).val() * currency_value[currency_name]).toFixed(2) );
 
-      array.push( [currency_name, currency_amount] );
+      array.push([
+        currency_name,
+        Number( $(currency).val() ),
+        currency_amount
+      ]);
 
       // Display total monetary value of currency
       $(currency).next().val( `$${currency_amount}` );
     } else {
-      array.push( [$(currency).attr('id'), 0] );
+      array.push( [$(currency).attr('id'), 0, 0] );
 
       // Display monetary value of currency
       $(currency).next().val('$0');
@@ -97,7 +105,7 @@ function getCID() {
 
 function cashInDrawer(array) {
   // 1) Calculate total cash in drawer
-  let total = Number( array.reduce((total, currency) => total + currency[1], 0).toFixed(2) );
+  let total = Number( array.reduce((total, currency) => total + currency[2], 0).toFixed(2) );
 
   // 2) Display total cash in drawer
   $('#total_cash').text( `$${total}` );
@@ -112,9 +120,9 @@ function getChangeList(change) {
 
   for (let i = 0; i < change.length; i++) {
     if (i === 0) {
-      list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
+      list += `${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: ${change[i][1]}`;
     } else {
-      list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: $${change[i][1]}`;
+      list += `, ${(change[i][0]).charAt(0).toUpperCase() + (change[i][0]).slice(1)}: ${change[i][1]}`;
     }
   }
 
@@ -135,39 +143,51 @@ function checkCashRegister(price, cash, cid) {
 
     // Else if cash in drawer = change
   } else if (drawer === change) {
-    $('#change_list').append(`<li>Change = ${getChangeList(cid)}</li>`);
+    // Filter through cid to only display non-zero currencies
+    let change_amount = cid.filter((arr) => arr[2] !== 0);
+
+    $('#change_list').append(`<li>Total Amount Due: $${price} <br /> Amount Paid: $${cash} <br /> Change: $${change} (${getChangeList(change_amount)})</li>`);
 
     // Else cash in drawer > change
   } else {
-    let return_change = [];
+    let change_amount = [];
 
     for (let i = cid.length - 1; i >= 0; i--) {
-      // If change >= currency value and will use all of the currency
-      if (change >= currency_value[cid[i][0]] && change >= cid[i][1]) {
-        return_change.push(cid[i]);
-        change = Number( (change - cid[i][1]).toFixed(2) );
+      // Skip zero currencies
+      if (cid[i][2] === 0) {
+        continue;
+      } else {
+        // If change >= currency value and will use all of the currency
+        if (change >= currency_value[cid[i][0]] && change >= cid[i][2]) {
+          change_amount.push(cid[i]);
+          change = Number( (change - cid[i][2]).toFixed(2) );
 
-        // Else if change >= currency value but won't use all of the current currency
-      } else if (change >= currency_value[cid[i][0]] && change < cid[i][1]) {
-        let currency_amount = 0;
+          // Else if change >= currency value but won't use all of the current currency
+        } else if (change >= currency_value[cid[i][0]] && change < cid[i][2]) {
+          let currency_amount = 0;
 
-        while (change >= currency_value[cid[i][0]]) {
-          change = Number( (change - currency_value[cid[i][0]]).toFixed(2) );
+          while (change >= currency_value[cid[i][0]]) {
+            change = Number( (change - currency_value[cid[i][0]]).toFixed(2) );
 
-          currency_amount = Number( (currency_amount + currency_value[cid[i][0]]).toFixed(2) );
-        }
+            currency_amount = Number( (currency_amount + currency_value[cid[i][0]]).toFixed(2) );
+          }
 
-        return_change.push( [cid[i][0], currency_amount] );
-      }  // End else if
+          change_amount.push([
+            cid[i][0],
+            Number( (currency_amount / currency_value[cid[i][0]]).toFixed(2) ),
+            currency_amount
+          ]);
+        }  // End else if change >= currency value but won't use all of the current currency
+      }  // End else if non-zero currencies
     }  // End for loop
 
     // Enough cash in drawer to return entire change amount
     if (change === 0) {
-      $('#change_list').append(`<li>Change = ${getChangeList(return_change)}</li>`);
+      $('#change_list').append(`<li>Total Amount Due: $${price} <br /> Amount Paid: $${cash} <br /> Change: $${cash - price} (${getChangeList(change_amount)})</li>`);
 
       // Else not enough cash in drawer to return entire change amount
     } else {
-      $('#change_list').append('<li>Not enough funds to return change</li>');
+      $('#change_list').append(`<li>Total Amount Due: ${price} <br /> Amount Paid: ${cash} <br /> Not enough funds to return change</li>`);
     }
   }  // End else cash in drawer > change
 
