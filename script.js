@@ -19,13 +19,13 @@ $(function() {
       evt.preventDefault();
     }
   });
-  
+
   $('output').val('$0');
 
   // Calculate and display total cash in drawer
   cashInDrawer(cid);
 
-  // Update total monetary value of currency on input
+  // Update and display total monetary value of currency on input
   $('fieldset input').on('input', function(evt) {
     cid = getCID();
   });
@@ -33,6 +33,22 @@ $(function() {
   $('#clear_currency').on('click', function(evt) {
     $('input').val('');
     $('output').val('$0');
+    cid = getCID();
+  });
+
+  $('#default_currency').on('click', function(evt) {
+    // Default number of each currency
+    $('#penny').val(101);
+    $('#nickel').val(41);
+    $('#dime').val(31);
+    $('#quarter').val(17);
+    $('#one').val(90);
+    $('#five').val(11);
+    $('#ten').val(2);
+    $('#twenty').val(3);
+    $('#hundred').val(1);
+
+    // Calculate and display monetary value of each currency and total cash in drawer
     cid = getCID();
   });
 
