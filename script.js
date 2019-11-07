@@ -13,6 +13,13 @@ var currency_value = {
 var cid = [];
 
 $(function() {
+  // Only allow number input and backspace
+  $('input').on('keypress', function(evt) {
+    if ( !(evt.key === 'Enter' || (evt.key >= 0 && evt.key <= 9)) ) {
+      evt.preventDefault();
+    }
+  });
+  
   $('output').val('$0');
 
   // Calculate and display total cash in drawer
