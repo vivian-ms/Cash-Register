@@ -84,8 +84,8 @@ button {
   margin-left: 0px;
 }
 
-ul {
-  list-style-type: none;
+#change_list {
+  list-style-type: circle;
 }
 
 li {
