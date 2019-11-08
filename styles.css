@@ -84,12 +84,24 @@ button {
   margin-left: 0px;
 }
 
+#register_status {
+  font-weight: bold;
+}
+
+.open {
+  color: green;
+}
+
+.closed {
+  color: red;
+}
+
 #change_list {
   list-style-type: circle;
 }
 
 li {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
 .author {

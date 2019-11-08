@@ -10,7 +10,7 @@ var currency_value = {
   hundred: 100
 };
 
-var cid = [];  // cid = [ [Name of currency, # of currency, total monetary value of currency] ]
+var cid = [];  // cid = [ [Name of currency, # of currency, monetary amount of currency] ]
 
 $(function() {
   // Only allow number input and backspace
@@ -22,10 +22,10 @@ $(function() {
 
   $('output').val('$0');
 
-  // Calculate and display total cash in drawer
+  // Calculate and display total cash in drawer and display status of register
   cashInDrawer(cid);
 
-  // Update and display total monetary value of currency on input
+  // Update and display monetary amount of currency on input
   $('fieldset input').on('input', function(evt) {
     cid = getCID();
   });
@@ -37,7 +37,7 @@ $(function() {
   });
 
   $('#default_currency').on('click', function(evt) {
-    // Default number of each currency
+    // Default # of each currency
     $('#penny').val(101);
     $('#nickel').val(41);
     $('#dime').val(31);
@@ -48,7 +48,7 @@ $(function() {
     $('#twenty').val(3);
     $('#hundred').val(1);
 
-    // Calculate and display monetary value of each currency and total cash in drawer
+    // Calculate and display monetary amount of each currency and total cash in drawer and display status of register
     cid = getCID();
   });
 
@@ -69,10 +69,24 @@ $(function() {
 
 
 
-function getCID() {
-  let array = [];  // array = [ [Name of currency, # of currency, total monetary value of currency] ]
+function updateRegisterStatus(cash) {
+  if (cash > 0) {
+    $('#register_status').text('Cash register is open')
+      .removeClass('closed')
+      .addClass('open');
+  } else {
+    $('#register_status').text('Cash register is closed. No money in drawer')
+      .removeClass('open')
+      .addClass('closed');
+  }
+}  // End updateRegisterStatus()
 
-  // 1) Calculate the total monetary value of each currency
+
+
+function getCID() {
+  let array = [];  // array = [ [Name of currency, # of currency, monetary amount of currency] ]
+
+  // 1) Calculate the monetary amount of each currency
   for (let i = 0; i < $('fieldset input').length; i++) {
     let currency = $('fieldset input')[i];
     let currency_name = $(currency).attr('id');
@@ -86,17 +100,17 @@ function getCID() {
         currency_amount
       ]);
 
-      // Display total monetary value of currency
+      // Display monetary amount of currency
       $(currency).next().val( `$${currency_amount}` );
+
+      // Else if input field is empty, amount defaults to 0
     } else {
       array.push( [$(currency).attr('id'), 0, 0] );
-
-      // Display monetary value of currency
       $(currency).next().val('$0');
     }
   }  // End for loop
 
-  // 2) Calculate and display the total cash in drawer
+  // 2) Calculate and display the total cash in drawer and display status of register
   cashInDrawer(array);
 
   return array;
@@ -107,7 +121,10 @@ function cashInDrawer(array) {
   // 1) Calculate total cash in drawer
   let total = Number( array.reduce((total, currency) => total + currency[2], 0).toFixed(2) );
 
-  // 2) Display total cash in drawer
+  // 2) Display status of register
+  updateRegisterStatus(total);
+
+  // 3) Display total cash in drawer
   $('#total_cash').text( `$${total}` );
 
   return total;
@@ -136,8 +153,8 @@ function updateCurrency(cid, change_array) {
   for (let i = 0; i < cid.length; i++) {
     for (let j = 0; j < change_array.length; j++) {
       if (cid[i][0] === change_array[j][0]) {
-        cid[i][1] -= change_array[j][1];
-        cid[i][2] -= change_array[j][2];
+        cid[i][1] = Number( (cid[i][1] - change_array[j][1]).toFixed(2) );
+        cid[i][2] = Number( (cid[i][2] - change_array[j][2]).toFixed(2) );
       }
     }  // End j for loop
   } // End i for loop
@@ -146,11 +163,11 @@ function updateCurrency(cid, change_array) {
     // 2) Update the # of each currency displayed
     $( `#${currency[0]}` ).val( currency[1] );
 
-    // 3) Update the total monetary value of each currency displayed
+    // 3) Update the monetary amount of each currency displayed
     $( `#${currency[0]}` ).next().val( `$${currency[2]}` );
   });
 
-  // 3) Update and display the total cash in drawer
+  // 3) Update and display the total cash in drawer and display the status of the register
   cashInDrawer(cid);
 
   return cid;
@@ -166,7 +183,14 @@ function checkCashRegister(price, cash, cid) {
 
   // If cash in drawer < change
   if (drawer < change) {
-    $('#change_list').append('<li>Not enough funds to return change</li>');
+    $('#change_list').append(
+      `<li>
+        Total Amount Due: $${price} <br />
+        Amount Paid: $${cash} <br />
+        Change: $${change} <br />
+        Cash in register not enough to return change
+      </li>`
+    );
 
     // Else if cash in drawer = change
   } else if (drawer === change) {
@@ -181,7 +205,7 @@ function checkCashRegister(price, cash, cid) {
         </li>`
       );
 
-    // Update the amount of each currency after returning change
+    // Update the amount of each currency and status of register after returning change
     cid = updateCurrency(cid, change_amount);
 
     // Else cash in drawer > change
@@ -222,11 +246,11 @@ function checkCashRegister(price, cash, cid) {
         `<li>
           Total Amount Due: $${price} <br />
           Amount Paid: $${cash} <br />
-          Change: $${cash - price} (${getChangeList(change_amount)})
+          Change: $${(cash - price).toFixed(2)} (${getChangeList(change_amount)})
         </li>`
       );
 
-      // Update amount of each currency after returning change
+      // Update amount of each currency and status of register after returning change
       cid = updateCurrency(cid, change_amount);
 
       // Else not enough cash in drawer to return entire change amount
@@ -235,7 +259,8 @@ function checkCashRegister(price, cash, cid) {
         `<li>
           Total Amount Due: ${price} <br />
           Amount Paid: ${cash} <br />
-          Not enough funds to return change
+          Change: $${(cash - price).toFixed(2)}
+          Cash in register not enough to return change
         </li>`
       );
     }
