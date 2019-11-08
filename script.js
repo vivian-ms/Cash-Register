@@ -201,90 +201,113 @@ function checkCashRegister(price, cash, cid) {
   // Get total cash in drawer
   let drawer = cashInDrawer(cid);
 
-  // If cash in drawer < change
-  if (drawer < change) {
+  // Amount paid < amount due
+  if (change < 0) {
     $('#change_list').append(
       `<li>
         Total Amount Due: $${price} <br />
         Amount Paid: $${cash} <br />
-        Change: $${change} <br />
-        Cash in register not enough to return change
+        Customer didn't pay enough, he/she still owes $${-change}
       </li>`
     );
 
-    // Else if cash in drawer = change
-  } else if (drawer === change) {
-    // Filter through cid for non-zero currencies
-    let change_amount = cid.filter((arr) => arr[2] !== 0);
-
+    // Amount paid = amount due
+  } else if (change === 0) {
     $('#change_list').append(
       `<li>
         Total Amount Due: $${price} <br />
         Amount Paid: $${cash} <br />
-        Change: $${change} (${getChangeList(change_amount)})
-        </li>`
-      );
+        The exact amount was paid, no change is due
+      </li>`
+    );
 
-    // Update the amount of each currency and status of register after returning change
-    cid = updateCurrency(cid, change_amount);
-
-    // Else cash in drawer > change
+    // Amount paid > amount due
   } else {
-    let change_amount = [];
-
-    for (let i = cid.length - 1; i >= 0; i--) {
-      if (cid[i][2] === 0) {
-        continue;  // Skip zero currencies
-      } else {
-        // If change >= currency value and will use all of the currency
-        if (change >= currency_value[cid[i][0]] && change >= cid[i][2]) {
-          change_amount.push(cid[i]);
-          change = Number( (change - cid[i][2]).toFixed(2) );
-
-          // Else if change >= currency value but won't use all of the current currency
-        } else if (change >= currency_value[cid[i][0]] && change < cid[i][2]) {
-          let currency_amount = 0;  // Monetary amount of currency used
-
-          while (change >= currency_value[cid[i][0]]) {
-            change = Number( (change - currency_value[cid[i][0]]).toFixed(2) );
-
-            currency_amount = Number( (currency_amount + currency_value[cid[i][0]]).toFixed(2) );
-          }
-
-          change_amount.push([
-            cid[i][0],
-            Number( (currency_amount / currency_value[cid[i][0]]).toFixed(2) ),
-            currency_amount
-          ]);
-        }  // End else if change >= currency value but won't use all of current currency
-      }  // End else if non-zero currency
-    }  // End for loop
-
-    // Enough cash in drawer to return entire change amount
-    if (change === 0) {
+    // If cash in drawer < change
+    if (drawer < change) {
       $('#change_list').append(
         `<li>
           Total Amount Due: $${price} <br />
           Amount Paid: $${cash} <br />
-          Change: $${(cash - price).toFixed(2)} (${getChangeList(change_amount)})
-        </li>`
-      );
-
-      // Update amount of each currency and status of register after returning change
-      cid = updateCurrency(cid, change_amount);
-
-      // Else not enough cash in drawer to return entire change amount
-    } else {
-      $('#change_list').append(
-        `<li>
-          Total Amount Due: ${price} <br />
-          Amount Paid: ${cash} <br />
-          Change: $${(cash - price).toFixed(2)} <br />
+          Change: $${change} <br />
           Cash in register not enough to return change
         </li>`
       );
-    }
-  }  // End else cash in drawer > change
+
+      // Else if cash in drawer = change
+    } else if (drawer === change) {
+      // Filter through cid for non-zero currencies
+      let change_amount = cid.filter((arr) => arr[2] !== 0);
+
+      $('#change_list').append(
+        `<li>
+          Total Amount Due: $${price} <br />
+          Amount Paid: $${cash} <br />
+          Change: $${change} (${getChangeList(change_amount)})
+          </li>`
+        );
+
+      // Update the amount of each currency and status of register after returning change
+      cid = updateCurrency(cid, change_amount);
+
+      // Else cash in drawer > change
+    } else {
+      let change_amount = [];
+
+      for (let i = cid.length - 1; i >= 0; i--) {
+        if (cid[i][2] === 0) {
+          continue;  // Skip zero currencies
+        } else {
+          // If change >= currency value and will use all of the currency
+          if (change >= currency_value[cid[i][0]] && change >= cid[i][2]) {
+            change_amount.push(cid[i]);
+            change = Number( (change - cid[i][2]).toFixed(2) );
+
+            // Else if change >= currency value but won't use all of the current currency
+          } else if (change >= currency_value[cid[i][0]] && change < cid[i][2]) {
+            let currency_amount = 0;  // Monetary amount of currency used
+
+            while (change >= currency_value[cid[i][0]]) {
+              change = Number( (change - currency_value[cid[i][0]]).toFixed(2) );
+
+              currency_amount = Number( (currency_amount + currency_value[cid[i][0]]).toFixed(2) );
+            }
+
+            change_amount.push([
+              cid[i][0],
+              Number( (currency_amount / currency_value[cid[i][0]]).toFixed(2) ),
+              currency_amount
+            ]);
+          }  // End else if change >= currency value but won't use all of current currency
+        }  // End else if non-zero currency
+      }  // End for loop
+
+      // Enough cash in drawer to return entire change amount
+      if (change === 0) {
+        $('#change_list').append(
+          `<li>
+            Total Amount Due: $${price} <br />
+            Amount Paid: $${cash} <br />
+            Change: $${(cash - price).toFixed(2)} (${getChangeList(change_amount)})
+          </li>`
+        );
+
+        // Update amount of each currency and status of register after returning change
+        cid = updateCurrency(cid, change_amount);
+
+        // Else not enough cash in drawer to return entire change amount
+      } else {
+        $('#change_list').append(
+          `<li>
+            Total Amount Due: ${price} <br />
+            Amount Paid: ${cash} <br />
+            Change: $${(cash - price).toFixed(2)} <br />
+            Cash in register not enough to return change
+          </li>`
+        );
+      }
+    }  // End else cash in drawer > change
+  }  // End amount paid > amount due
 
   $('#price, #cash').val('');
 }  // End checkCashRegister()
