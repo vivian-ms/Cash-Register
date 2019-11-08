@@ -80,6 +80,11 @@ button {
   font-weight: bold;
 }
 
+button:disabled {
+  background: lightgrey;
+  color: grey;
+}
+
 #clear_currency {
   margin-left: 0px;
 }

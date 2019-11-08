@@ -31,6 +31,9 @@ $(function() {
   });
 
   $('#clear_currency').on('click', function(evt) {
+    // Allow changing # of currency once previous # of currencies are cleared
+    $('fieldset input').prop('disabled', false);
+
     $('input').val('');
     $('output').val('$0');
     cid = getCID();
@@ -48,12 +51,18 @@ $(function() {
     $('#twenty').val(3);
     $('#hundred').val(1);
 
+    // Allow changing # of currency
+    $('fieldset input').prop('disabled', false);
+
     // Calculate and display monetary amount of each currency and total cash in drawer and display status of register
     cid = getCID();
   });
 
   $('form').on('submit', function(evt) {
     evt.preventDefault();
+
+    // Disable changing # of currency once register is in use
+    $('fieldset input').prop('disabled', true);
 
     checkCashRegister(
       Number( $('#price').val() ),
@@ -62,22 +71,33 @@ $(function() {
     );
   });
 
-  $('#clear').on('click', function(evt) {
+  $('#clear_list').on('click', function(evt) {
     $('#change_list').empty();
+
+    // Allow changing # of currency after deleting history
+    $('fieldset input').prop('disabled', false);
   });
 });  // End ready()
 
 
 
 function updateRegisterStatus(cash) {
+  // Register is open
   if (cash > 0) {
     $('#register_status').text('Cash register is open')
       .removeClass('closed')
       .addClass('open');
+
+    // Remove disable property for inputs for amount due and amount paid and button to calculate change
+    $('#price, #cash, #calculate').prop('disabled', false);
+    // Register is closed
   } else {
     $('#register_status').text('Cash register is closed. No money in drawer')
       .removeClass('open')
       .addClass('closed');
+
+    // Disable inputs for amount due and amount paid and button to calculate change
+    $('#price, #cash, #calculate').prop('disabled', true);
   }
 }  // End updateRegisterStatus()
 
@@ -259,7 +279,7 @@ function checkCashRegister(price, cash, cid) {
         `<li>
           Total Amount Due: ${price} <br />
           Amount Paid: ${cash} <br />
-          Change: $${(cash - price).toFixed(2)}
+          Change: $${(cash - price).toFixed(2)} <br />
           Cash in register not enough to return change
         </li>`
       );
