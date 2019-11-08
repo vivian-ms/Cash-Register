@@ -131,6 +131,33 @@ function getChangeList(change) {
 
 
 
+function updateCurrency(cid, change_array) {
+  // 1) Update amount of each currency after returning change
+  for (let i = 0; i < cid.length; i++) {
+    for (let j = 0; j < change_array.length; j++) {
+      if (cid[i][0] === change_array[j][0]) {
+        cid[i][1] -= change_array[j][1];
+        cid[i][2] -= change_array[j][2];
+      }
+    }  // End j for loop
+  } // End i for loop
+
+  cid.forEach((currency) => {
+    // 2) Update the # of each currency displayed
+    $( `#${currency[0]}` ).val( currency[1] );
+
+    // 3) Update the total monetary value of each currency displayed
+    $( `#${currency[0]}` ).next().val( `$${currency[2]}` );
+  });
+
+  // 3) Update and display the total cash in drawer
+  cashInDrawer(cid);
+
+  return cid;
+}  // End updateCurrency()
+
+
+
 function checkCashRegister(price, cash, cid) {
   let change = Number( (cash - price).toFixed(2) );
 
@@ -143,19 +170,27 @@ function checkCashRegister(price, cash, cid) {
 
     // Else if cash in drawer = change
   } else if (drawer === change) {
-    // Filter through cid to only display non-zero currencies
+    // Filter through cid for non-zero currencies
     let change_amount = cid.filter((arr) => arr[2] !== 0);
 
-    $('#change_list').append(`<li>Total Amount Due: $${price} <br /> Amount Paid: $${cash} <br /> Change: $${change} (${getChangeList(change_amount)})</li>`);
+    $('#change_list').append(
+      `<li>
+        Total Amount Due: $${price} <br />
+        Amount Paid: $${cash} <br />
+        Change: $${change} (${getChangeList(change_amount)})
+        </li>`
+      );
+
+    // Update the amount of each currency after returning change
+    cid = updateCurrency(cid, change_amount);
 
     // Else cash in drawer > change
   } else {
     let change_amount = [];
 
     for (let i = cid.length - 1; i >= 0; i--) {
-      // Skip zero currencies
       if (cid[i][2] === 0) {
-        continue;
+        continue;  // Skip zero currencies
       } else {
         // If change >= currency value and will use all of the currency
         if (change >= currency_value[cid[i][0]] && change >= cid[i][2]) {
@@ -164,7 +199,7 @@ function checkCashRegister(price, cash, cid) {
 
           // Else if change >= currency value but won't use all of the current currency
         } else if (change >= currency_value[cid[i][0]] && change < cid[i][2]) {
-          let currency_amount = 0;
+          let currency_amount = 0;  // Monetary amount of currency used
 
           while (change >= currency_value[cid[i][0]]) {
             change = Number( (change - currency_value[cid[i][0]]).toFixed(2) );
@@ -177,17 +212,32 @@ function checkCashRegister(price, cash, cid) {
             Number( (currency_amount / currency_value[cid[i][0]]).toFixed(2) ),
             currency_amount
           ]);
-        }  // End else if change >= currency value but won't use all of the current currency
-      }  // End else if non-zero currencies
+        }  // End else if change >= currency value but won't use all of current currency
+      }  // End else if non-zero currency
     }  // End for loop
 
     // Enough cash in drawer to return entire change amount
     if (change === 0) {
-      $('#change_list').append(`<li>Total Amount Due: $${price} <br /> Amount Paid: $${cash} <br /> Change: $${cash - price} (${getChangeList(change_amount)})</li>`);
+      $('#change_list').append(
+        `<li>
+          Total Amount Due: $${price} <br />
+          Amount Paid: $${cash} <br />
+          Change: $${cash - price} (${getChangeList(change_amount)})
+        </li>`
+      );
+
+      // Update amount of each currency after returning change
+      cid = updateCurrency(cid, change_amount);
 
       // Else not enough cash in drawer to return entire change amount
     } else {
-      $('#change_list').append(`<li>Total Amount Due: ${price} <br /> Amount Paid: ${cash} <br /> Not enough funds to return change</li>`);
+      $('#change_list').append(
+        `<li>
+          Total Amount Due: ${price} <br />
+          Amount Paid: ${cash} <br />
+          Not enough funds to return change
+        </li>`
+      );
     }
   }  // End else cash in drawer > change
 
