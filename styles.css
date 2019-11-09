@@ -28,6 +28,11 @@ legend {
   width: 120px;
 }
 
+.required {
+  color: red;
+  font-weight: bold;
+}
+
 #register_status {
   font-weight: bold;
 }
