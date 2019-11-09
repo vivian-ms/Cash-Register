@@ -14,8 +14,15 @@ var cid = [];  // cid = [ [Name of currency, # of currency, monetary amount of c
 
 $(function() {
   // Only allow number input and backspace
-  $('input').on('keypress', function(evt) {
-    if ( !(evt.key === 'Enter' || evt.key === '.' || (evt.key >= 0 && evt.key <= 9)) ) {
+  $('fieldset input').on('keypress', function(evt) {
+    if ( !(evt.key === 'Enter' || (evt.key >= 0 && evt.key <= 9)) ) {
+      evt.preventDefault();
+    }
+  });
+
+  // Only allow number input, backspace, and dot (.)
+  $('#price, #cash').on('keypress', function(evt) {
+    if ( !(evt.key === 'Enter' || evt.key === '.'|| (evt.key >= 0 && evt.key <= 9)) ) {
       evt.preventDefault();
     }
   });
