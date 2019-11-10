@@ -25,9 +25,9 @@ $(function() {
     }
   });
 
-  // Only allow number input, backspace, and dot (.)
+  // Only allow number input, backspace, and one dot (.)
   $('#price').on('keypress', function(evt) {
-    if ( !(evt.key === 'Enter' || evt.key === '.'|| (evt.key >= 0 && evt.key <= 9)) ) {
+    if ( !(evt.key === 'Enter' || (evt.key === '.' && !(/\./.test($('#price').val())) )|| (evt.key >= 0 && evt.key <= 9)) ) {
       evt.preventDefault();
     }
   });
