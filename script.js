@@ -79,8 +79,6 @@ $(function() {
       totalCashPaid(cash_array),
       getCID()
     );
-
-    $('#clear_list').prop('disabled', false);
   });
 
   $('#clear_list').on('click', function(evt) {
@@ -260,13 +258,8 @@ function checkCashRegister(price, cash, cid) {
 
   // Amount paid < amount due
   if (change < 0) {
-    $('#change_list').append(
-      `<li>
-        Total Amount Due: $${price} <br />
-        Amount Paid: $${cash} <br />
-        Customer didn't pay enough, he/she still owes $${-change}
-      </li>`
-    );
+    alert(`Customer didn't pay enough, he/she still owes $${-change}`);
+
 
     // Amount paid = amount due
   } else if (change === 0) {
@@ -277,6 +270,10 @@ function checkCashRegister(price, cash, cid) {
         The exact amount was paid, no change is due
       </li>`
     );
+
+    // Update the amount of each currency and status of register after receiving cash
+    cid = updateCurrency(cid, cash_array, []);
+
 
     // Amount paid > amount due
   } else {
@@ -304,7 +301,7 @@ function checkCashRegister(price, cash, cid) {
           </li>`
         );
 
-      // Update the amount of each currency and status of register after returning change
+      // Update the amount of each currency and status of register after receiving cash and returning change
       cid = updateCurrency(cid, cash_array, change_amount);
 
       // Else cash in drawer > change
@@ -362,10 +359,13 @@ function checkCashRegister(price, cash, cid) {
             Cash in register not enough to return change
           </li>`
         );
-      }
+      }  // End else not enough cash to return change
     }  // End else cash in drawer > change
   }  // End amount paid > amount due
 
-  $('#price, #paid_fieldset input').val('');
-  cash_array = getCashPaid();
+  if (change >= 0) {
+    $('#price, #paid_fieldset input').val('');
+    cash_array = getCashPaid();
+    $('#clear_list').prop('disabled', false);
+  }
 }  // End checkCashRegister()
