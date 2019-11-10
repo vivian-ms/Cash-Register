@@ -13,6 +13,9 @@ var currency_value = {
 var cid = [];  // cid = [ [Name of currency, # of currency, monetary amount of currency] ]
 
 $(function() {
+  // Disable 'Clear History' button on load
+  $('#clear_list').prop('disabled', true);
+
   // Only allow number input and backspace
   $('fieldset input').on('keypress', function(evt) {
     if ( !(evt.key === 'Enter' || (evt.key >= 0 && evt.key <= 9)) ) {
@@ -38,9 +41,6 @@ $(function() {
   });
 
   $('#clear_currency').on('click', function(evt) {
-    // Allow changing # of currency once previous # of currencies are cleared
-    $('fieldset input').prop('disabled', false);
-
     $('input').val('');
     $('output').val('$0');
     cid = getCID();
@@ -58,9 +58,6 @@ $(function() {
     $('#twenty').val(3);
     $('#hundred').val(1);
 
-    // Allow changing # of currency
-    $('fieldset input').prop('disabled', false);
-
     // Calculate and display monetary amount of each currency and total cash in drawer and display status of register
     cid = getCID();
   });
@@ -68,21 +65,19 @@ $(function() {
   $('form').on('submit', function(evt) {
     evt.preventDefault();
 
-    // Disable changing # of currency once register is in use
-    $('fieldset input').prop('disabled', true);
-
     checkCashRegister(
       Number( $('#price').val() ),
       Number( $('#cash').val() ),
       getCID()
     );
+
+    $('#clear_list').prop('disabled', false);
   });
 
   $('#clear_list').on('click', function(evt) {
     $('#change_list').empty();
+    $('#clear_list').prop('disabled', true);
 
-    // Allow changing # of currency after deleting history
-    $('fieldset input').prop('disabled', false);
   });
 });  // End ready()
 
@@ -95,7 +90,7 @@ function updateRegisterStatus(cash) {
       .removeClass('closed')
       .addClass('open');
 
-    // Remove disable property for inputs for amount due and amount paid and button to calculate change
+    // Allow use of inputs for amount due and amount paid and button to calculate change
     $('#price, #cash, #calculate').prop('disabled', false);
     // Register is closed
   } else {
