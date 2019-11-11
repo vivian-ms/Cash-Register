@@ -1,96 +1,59 @@
-html, body {
-  font-size: 16px;
-}
-
 body {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0px;
-  padding-top: 5px;
-  padding-right: 5px;
-  padding-left: 5px;
   background: lavender;
-  font-family: verdana;
-}
-
-h1 {
-  font-family: impact;
-}
-
-.main-content {
-  flex: 1;
 }
 
 fieldset {
-  margin-bottom: 20px;
-  padding: 20px;
+  width: 100%;
   border-radius: 10px;
 }
 
+#cid_fieldset {
+  border: 1px solid black;
+}
+
+#paid_fieldset {
+  border: 1px solid silver;
+}
+
 legend {
-  padding-right: 10px;
-  padding-left: 10px;
+  width: auto;
+}
+
+#paid_fieldset legend {
+  font-size: 1.05rem;
+}
+
+.form-inline #cid_fieldset .container-fluid .form-group {
+  flex-basis: 240px;
+}
+
+.form-inline #paid_fieldset .container-fluid .form-group {
+  flex-basis: 170px;
+}
+
+.form-inline fieldset .container-fluid .form-group .col-form-label {
+  flex-basis: 75px;
+}
+
+.form-inline fieldset .container-fluid .form-group .form-control {
+  width: 60px;
+}
+
+.form-inline .container-fluid .form-group .form-control {
+  width: 120px;
+}
+
+.required {
+  color: red;
   font-weight: bold;
-}
-
-.flex-container {
-  display: flex;
-  flex-flow: row wrap;
-}
-
-.flex-item {
-  display: flex;
-  margin: 5px;
-}
-
-fieldset .flex-item {
-  flex-basis: 235px;
-}
-
-label {
-  margin-right: 10px;
-  padding: 5px;
-  text-align: right;
-}
-
-.currency_label {
-  width: 75px;
-}
-
-input {
-  width: 50px;
-  padding: 5px;
-  border-radius: 5px;
-}
-
-output {
-  padding: 5px;
-}
-
-button {
-  margin-top: 20px;
-  margin-left: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  background: mediumpurple;
-  color: gold;
-  font-family: 'Comic Sans MS';
-  font-weight: bold;
-}
-
-button:disabled {
-  background: lightgrey;
-  color: grey;
-}
-
-#clear_currency {
-  margin-left: 0px;
 }
 
 #register_status {
   font-weight: bold;
+}
+
+li {
+  margin-bottom: 20px;
 }
 
 .open {
@@ -103,10 +66,6 @@ button:disabled {
 
 #change_list {
   list-style-type: circle;
-}
-
-li {
-  margin-bottom: 20px;
 }
 
 .author {

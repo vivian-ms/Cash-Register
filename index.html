@@ -3,96 +3,144 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <title>Cash Register</title>
   </head>
   <body>
-    <h1>Cash Register</h1>
+    <div class="container-fluid pt-3 px-3 d-flex flex-column">
+      <h1>Cash Register</h1>
 
-    <div class="main-content">
-      <form>
-        <fieldset>
-          <legend>Cash in Drawer</legend>
-          <p>Enter how much of each type of currency is in the cash drawer</p>
+      <div class="flex-fill">
+        <form class="form-inline p-3">
+          <fieldset class="p-3 mb-3" id="cid_fieldset">
+            <legend class="px-3">Cash in Drawer</legend>
+            <p class="lead">Enter the number of each type of currency in the cash register</p>
 
-          <div class="flex-container">
-            <div class="flex-item">
-              <label for="penny" class="currency_label">Penny</label>
-              <input type="text" id="penny" maxlength="3">
-              <output for="penny"></output>
-            </div>
-            <div class="flex-item">
-              <label for="nickel" class="currency_label">Nickel</label>
-              <input type="text" id="nickel" maxlength="3">
-              <output for="nickel"></output>
-            </div>
-            <div class="flex-item">
-              <label for="dime" class="currency_label">Dime</label>
-              <input type="text" id="dime" maxlength="3">
-              <output for="dime"></output>
-            </div>
-            <div class="flex-item">
-              <label for="quarter" class="currency_label">Quarter</label>
-              <input type="text" id="quarter" maxlength="3">
-              <output for="quarter"></output>
-            </div>
-            <div class="flex-item">
-              <label for="one" class="currency_label">One</label>
-              <input type="text" id="one" maxlength="3">
-              <output for="one"></output>
-            </div>
-            <div class="flex-item">
-              <label for="five" class="currency_label">Five</label>
-              <input type="text" id="five" maxlength="3">
-              <output for="five"></output>
-            </div>
-            <div class="flex-item">
-              <label for="ten" class="currency_label">Ten</label>
-              <input type="text" id="ten" maxlength="3">
-              <output for="ten"></output>
-            </div>
-            <div class="flex-item">
-              <label for="twenty" class="currency_label">Twenty</label>
-              <input type="text" id="twenty" maxlength="3">
-              <output for="twenty"></output>
-            </div>
-            <div class="flex-item">
-              <label for="hundred" class="currency_label">Hundred</label>
-              <input type="text" id="hundred" maxlength="3">
-              <output for="hundred"></output>
-            </div>
-          </div>  <!-- End .flex-container -->
+            <div class="container-fluid d-flex flex-wrap">
+              <div class="form-group mb-1 d-flex">
+                <label for="penny" class="col-form-label mr-3">Penny</label>
+                <input type="text" id="penny" class="form-control" maxlength="3">
+                <output for="penny" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="nickel" class="col-form-label mr-3">Nickel</label>
+                <input type="text" id="nickel" class="form-control" maxlength="3">
+                <output for="nickel" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="dime" class="col-form-label mr-3">Dime</label>
+                <input type="text" id="dime" class="form-control" maxlength="3">
+                <output for="dime" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="quarter" class="col-form-label mr-3">Quarter</label>
+                <input type="text" id="quarter" class="form-control" maxlength="3">
+                <output for="quarter" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="one" class="col-form-label mr-3">One</label>
+                <input type="text" id="one" class="form-control" maxlength="3">
+                <output for="one" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="five" class="col-form-label mr-3">Five</label>
+                <input type="text" id="five" class="form-control" maxlength="3">
+                <output for="five" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="ten" class="col-form-label mr-3">Ten</label>
+                <input type="text" id="ten" class="form-control" maxlength="3">
+                <output for="ten" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="twenty" class="col-form-label mr-3">Twenty</label>
+                <input type="text" id="twenty" class="form-control" maxlength="3">
+                <output for="twenty" class="p-3"></output>
+              </div>
+              <div class="form-group mb-1 d-flex">
+                <label for="hundred" class="col-form-label mr-3">Hundred</label>
+                <input type="text" id="hundred" class="form-control" maxlength="3">
+                <output for="hundred" class="p-3"></output>
+              </div>
+            </div>  <!-- End .container-fluid .d-flex .flex-wrap -->
 
-          <button type="button" id="clear_currency">Clear Amount of Currency</button>
-          <button type="button" id="default_currency">Default Number of Currency</button>
+            <button type="button" id="clear_currency" class="btn btn-outline-danger mr-3 mb-3 mb-sm-0">Clear Amount of Currency</button>
+            <button type="button" id="default_currency" class="btn btn-outline-info">Default Amount of Currency</button>
 
-          <p>Total Cash in Drawer: <span id="total_cash"></span></p>
-          <p id="register_status"></p>
-        </fieldset>
+            <p class="mt-3">Total Cash in Drawer: <span id="total_cash"></span></p>
+            <p id="register_status"></p>
+          </fieldset>  <!-- End #cid_fieldset -->
 
-        <div class="flex-container">
-          <div class="flex-item">
-            <label for="price">Total Amount Due</label>
-            <input type="text" id="price" required>
-          </div>
-          <div class="flex-item">
-            <label for="cash">Amount Paid</label>
-            <input type="text" id="cash" required>
-          </div>
-        </div>  <!-- End .flex-container -->
+          <div class="form-group my-3">
+            <label for="price" class="col-form-label mr-3"><span class="required px-2">*</span>Total Amount Due</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">$</span>
+              </div>
+              <input type="text" id="price" class="form-control" maxlength="10" placeholder="0.00" pattern="^[0-9]*(.[0-9]{1,2})?$" required>
+            </div>  <!-- End .input-group -->
+          </div>  <!-- End .form-group -->
 
-        <button type="submit" id="calculate">Calculate Change</button>
-      </form>
+          <fieldset class="p-3 mb-3" id="paid_fieldset">
+            <legend class="px-2"><span class="required pr-1">*</span>Amount Paid</legend>
+            <p class="lead">Enter the number of each type of currency received from the customer</p>
 
-      <button type="button" id="clear_list">Clear Change History</button>
-      <ul id="change_list"></ul>
-    </div>  <!-- End .main-content -->
+            <div class="container-fluid d-flex flex-wrap">
+              <div class="form-group mb-2 d-flex">
+                <label for="penny_paid" class="col-form-label mr-3">Penny</label>
+                <input type="text" id="penny_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="nickel_paid" class="col-form-label mr-3">Nickel</label>
+                <input type="text" id="nickel_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="dime_paid" class="col-form-label mr-3">Dime</label>
+                <input type="text" id="dime_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="quarter_paid" class="col-form-label mr-3">Quarter</label>
+                <input type="text" id="quarter_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="one_paid" class="col-form-label mr-3">One</label>
+                <input type="text" id="one_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="five_paid" class="col-form-label mr-3">Five</label>
+                <input type="text" id="five_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="ten_paid" class="col-form-label mr-3 text-align-right">Ten</label>
+                <input type="text" id="ten_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="twenty_paid" class="col-form-label mr-3">Twenty</label>
+                <input type="text" id="twenty_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="hundred_paid" class="col-form-label mr-3">Hundred</label>
+                <input type="text" id="hundred_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+            </div>  <!-- End .container-fluid .d-flex .flex-wrap -->
 
-    <footer>
-      <p class="author">
-        Created by Vivian S for <a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/javascript-algorithms-and-data-structures-projects/cash-register" target="_blank">freeCodeCamp</a>
-      </p>
-    </footer>
+            <p class="mt-3">Total Amount Paid: <span id="cash_paid"></span></p>
+          </fieldset>  <!-- End #paid_fieldset -->
+
+          <button type="submit" id="calculate" class="btn btn-primary">Calculate Change</button>
+        </form>  <!-- End .form-inline -->
+
+        <button type="button" id="clear_list" class="btn btn-secondary ml-3">Clear Change History</button>
+        <ul id="change_list" class="p-3 ml-4"></ul>
+      </div>  <!-- End .flex-fill -->
+
+      <footer>
+        <p class="author">
+          Created by Vivian S for <a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/javascript-algorithms-and-data-structures-projects/cash-register" target="_blank">freeCodeCamp</a>
+        </p>
+      </footer>
+    </div>  <!-- End .container-fluid -->
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="script.js"></script>
