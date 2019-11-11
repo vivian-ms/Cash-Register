@@ -11,8 +11,13 @@ var currency_value = {
 };
 
 var cid = [];  // cid = [ [Name of currency, # of currency, monetary amount of currency] ]
+var cash_array = [];  // cid = [ [Name of currency, # of currency, monetary amount of currency] ]
+
 
 $(function() {
+  // Disable 'Clear History' button on load
+  $('#clear_list').prop('disabled', true);
+
   // Only allow number input and backspace
   $('fieldset input').on('keypress', function(evt) {
     if ( !(evt.key === 'Enter' || (evt.key >= 0 && evt.key <= 9)) ) {
@@ -20,9 +25,9 @@ $(function() {
     }
   });
 
-  // Only allow number input, backspace, and dot (.)
-  $('#price, #cash').on('keypress', function(evt) {
-    if ( !(evt.key === 'Enter' || evt.key === '.'|| (evt.key >= 0 && evt.key <= 9)) ) {
+  // Only allow number input, backspace, and one dot (.)
+  $('#price').on('keypress', function(evt) {
+    if ( !(evt.key === 'Enter' || (evt.key === '.' && !(/\./.test($('#price').val())) )|| (evt.key >= 0 && evt.key <= 9)) ) {
       evt.preventDefault();
     }
   });
@@ -33,14 +38,16 @@ $(function() {
   cashInDrawer(cid);
 
   // Update and display monetary amount of currency on input
-  $('fieldset input').on('input', function(evt) {
+  $('#cid_fieldset input').on('input', function(evt) {
     cid = getCID();
   });
 
-  $('#clear_currency').on('click', function(evt) {
-    // Allow changing # of currency once previous # of currencies are cleared
-    $('fieldset input').prop('disabled', false);
+  // Update and display monetary amount of currency received on input
+  $('#paid_fieldset input').on('input', function(evt) {
+    cash_array = getCashPaid();
+  });
 
+  $('#clear_currency').on('click', function(evt) {
     $('input').val('');
     $('output').val('$0');
     cid = getCID();
@@ -58,9 +65,6 @@ $(function() {
     $('#twenty').val(3);
     $('#hundred').val(1);
 
-    // Allow changing # of currency
-    $('fieldset input').prop('disabled', false);
-
     // Calculate and display monetary amount of each currency and total cash in drawer and display status of register
     cid = getCID();
   });
@@ -68,21 +72,18 @@ $(function() {
   $('form').on('submit', function(evt) {
     evt.preventDefault();
 
-    // Disable changing # of currency once register is in use
-    $('fieldset input').prop('disabled', true);
+    cash_array = getCashPaid();
 
     checkCashRegister(
       Number( $('#price').val() ),
-      Number( $('#cash').val() ),
+      totalCashPaid(cash_array),
       getCID()
     );
   });
 
   $('#clear_list').on('click', function(evt) {
     $('#change_list').empty();
-
-    // Allow changing # of currency after deleting history
-    $('fieldset input').prop('disabled', false);
+    $('#clear_list').prop('disabled', true);
   });
 });  // End ready()
 
@@ -95,8 +96,8 @@ function updateRegisterStatus(cash) {
       .removeClass('closed')
       .addClass('open');
 
-    // Remove disable property for inputs for amount due and amount paid and button to calculate change
-    $('#price, #cash, #calculate').prop('disabled', false);
+    // Allow use of inputs for amount due and amount paid and button to calculate change
+    $('#price, #paid_fieldset input, #calculate').prop('disabled', false);
     // Register is closed
   } else {
     $('#register_status').text('Cash register is closed. No money in drawer')
@@ -104,7 +105,7 @@ function updateRegisterStatus(cash) {
       .addClass('closed');
 
     // Disable inputs for amount due and amount paid and button to calculate change
-    $('#price, #cash, #calculate').prop('disabled', true);
+    $('#price, #paid_fieldset input, #calculate').prop('disabled', true);
   }
 }  // End updateRegisterStatus()
 
@@ -114,8 +115,8 @@ function getCID() {
   let array = [];  // array = [ [Name of currency, # of currency, monetary amount of currency] ]
 
   // 1) Calculate the monetary amount of each currency
-  for (let i = 0; i < $('fieldset input').length; i++) {
-    let currency = $('fieldset input')[i];
+  for (let i = 0; i < $('#cid_fieldset input').length; i++) {
+    let currency = $('#cid_fieldset input')[i];
     let currency_name = $(currency).attr('id');
 
     if ($(currency).val()) {
@@ -132,7 +133,7 @@ function getCID() {
 
       // Else if input field is empty, amount defaults to 0
     } else {
-      array.push( [$(currency).attr('id'), 0, 0] );
+      array.push( [currency_name, 0, 0] );
       $(currency).next().val('$0');
     }
   }  // End for loop
@@ -142,6 +143,38 @@ function getCID() {
 
   return array;
 }  // End getCID()
+
+
+
+function getCashPaid() {
+  // 1) Calculate the monetary amount of each currency received
+  let array = [];
+
+  for (let i = 0; i < $('#paid_fieldset input').length; i++) {
+    let currency = $('#paid_fieldset input')[i];
+    let currency_name = ( $(currency).attr('id') ).substring(0, ( $(currency).attr('id') ).length - 5);
+
+    if ($(currency).val()) {
+      let currency_amount = Number ( ($(currency).val() * currency_value[currency_name]).toFixed(2) );
+
+      array.push([
+        currency_name,
+        Number( $(currency).val() ),
+        currency_amount
+      ]);
+
+      // Else if input field is empty, amount defaults to 0
+    } else {
+      array.push( [currency_name, 0, 0] );
+    }
+  }  // End for loop
+
+  // 2) Calculate and display the total cash received
+  totalCashPaid(array);
+
+  return array;
+}  // End getCashPaid()
+
 
 
 function cashInDrawer(array) {
@@ -157,6 +190,17 @@ function cashInDrawer(array) {
   return total;
 }  // End cashInDrawer()
 
+
+
+function totalCashPaid(array) {
+  // 1) Calculate total cash received
+  let total = Number( array.reduce((total, currency) => total + currency[2], 0).toFixed(2) );
+
+  // 2) Display total cash in drawer
+  $('#cash_paid').text( `$${total}` );
+
+  return total;
+}
 
 
 function getChangeList(change) {
@@ -175,16 +219,20 @@ function getChangeList(change) {
 
 
 
-function updateCurrency(cid, change_array) {
-  // 1) Update amount of each currency after returning change
-  for (let i = 0; i < cid.length; i++) {
-    for (let j = 0; j < change_array.length; j++) {
-      if (cid[i][0] === change_array[j][0]) {
-        cid[i][1] = Number( (cid[i][1] - change_array[j][1]).toFixed(2) );
-        cid[i][2] = Number( (cid[i][2] - change_array[j][2]).toFixed(2) );
+function updateCurrency(cid, cash_array, change_array) {
+  // 1) Update amount of each currency after receiving cash and returning change
+  for (let i = 0, j = 0; i < cid.length; i++, j++) {
+    cid[i][1] = Number( (cid[i][1] + cash_array[j][1]).toFixed(2) );
+    cid[i][2] = Number( (cid[i][2] + cash_array[j][2]).toFixed(2) );
+
+    for (let k = 0; k < change_array.length; k++) {
+      if (cid[i][0] === change_array[k][0]) {
+        cid[i][1] = Number( (cid[i][1] - change_array[k][1]).toFixed(2) );
+        cid[i][2] = Number( (cid[i][2] - change_array[k][2]).toFixed(2) );
       }
-    }  // End j for loop
-  } // End i for loop
+    }  // End k for loop
+  } // End i, j for loop
+
 
   cid.forEach((currency) => {
     // 2) Update the # of each currency displayed
@@ -210,13 +258,8 @@ function checkCashRegister(price, cash, cid) {
 
   // Amount paid < amount due
   if (change < 0) {
-    $('#change_list').append(
-      `<li>
-        Total Amount Due: $${price} <br />
-        Amount Paid: $${cash} <br />
-        Customer didn't pay enough, he/she still owes $${-change}
-      </li>`
-    );
+    alert(`Customer didn't pay enough, he/she still owes $${-change}`);
+
 
     // Amount paid = amount due
   } else if (change === 0) {
@@ -227,6 +270,10 @@ function checkCashRegister(price, cash, cid) {
         The exact amount was paid, no change is due
       </li>`
     );
+
+    // Update the amount of each currency and status of register after receiving cash
+    cid = updateCurrency(cid, cash_array, []);
+
 
     // Amount paid > amount due
   } else {
@@ -254,8 +301,8 @@ function checkCashRegister(price, cash, cid) {
           </li>`
         );
 
-      // Update the amount of each currency and status of register after returning change
-      cid = updateCurrency(cid, change_amount);
+      // Update the amount of each currency and status of register after receiving cash and returning change
+      cid = updateCurrency(cid, cash_array, change_amount);
 
       // Else cash in drawer > change
     } else {
@@ -300,7 +347,7 @@ function checkCashRegister(price, cash, cid) {
         );
 
         // Update amount of each currency and status of register after returning change
-        cid = updateCurrency(cid, change_amount);
+        cid = updateCurrency(cid, cash_array, change_amount);
 
         // Else not enough cash in drawer to return entire change amount
       } else {
@@ -312,9 +359,13 @@ function checkCashRegister(price, cash, cid) {
             Cash in register not enough to return change
           </li>`
         );
-      }
+      }  // End else not enough cash to return change
     }  // End else cash in drawer > change
   }  // End amount paid > amount due
 
-  $('#price, #cash').val('');
+  if (change >= 0) {
+    $('#price, #paid_fieldset input').val('');
+    cash_array = getCashPaid();
+    $('#clear_list').prop('disabled', false);
+  }
 }  // End checkCashRegister()

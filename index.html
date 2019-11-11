@@ -13,9 +13,9 @@
 
       <div class="flex-fill">
         <form class="form-inline p-3">
-          <fieldset class="p-3 mb-3">
+          <fieldset class="p-3 mb-3" id="cid_fieldset">
             <legend class="px-3">Cash in Drawer</legend>
-            <p>Enter the number of each type of currency in the cash register</p>
+            <p class="lead">Enter the number of each type of currency in the cash register</p>
 
             <div class="container-fluid d-flex flex-wrap">
               <div class="form-group mb-1 d-flex">
@@ -70,20 +70,63 @@
 
             <p class="mt-3">Total Cash in Drawer: <span id="total_cash"></span></p>
             <p id="register_status"></p>
-          </fieldset>
+          </fieldset>  <!-- End #cid_fieldset -->
 
-          <div class="container-fluid mx-0 mb-3 p-0">
-            <div class="row">
-              <div class="form-group col-auto">
-                <label for="price" class="col-form-label mr-3"><span class="required px-2">*</span>Total Amount Due</label>
-                <input type="text" id="price" class="form-control" maxlength="10" placeholder="0.00" pattern="^[0-9]*(\.[0-9]{1,2})?$" title="Format: 0 or 0.0 or 0.00" required>
+          <div class="form-group my-3">
+            <label for="price" class="col-form-label mr-3"><span class="required px-2">*</span>Total Amount Due</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">$</span>
               </div>
-              <div class="form-group col-auto">
-                <label for="cash" class="col-form-label mr-3"><span class="required px-2">*</span>Amount Paid</label>
-                <input type="text" id="cash" class="form-control" maxlength="10" placeholder="0.00" title="Format: 0 or 0.0 or 0.00" pattern="^[0-9]*(\.[0-9]{1,2})?$" required>
+              <input type="text" id="price" class="form-control" maxlength="10" placeholder="0.00" pattern="^[0-9]*(.[0-9]{1,2})?$" required>
+            </div>  <!-- End .input-group -->
+          </div>  <!-- End .form-group -->
+
+          <fieldset class="p-3 mb-3" id="paid_fieldset">
+            <legend class="px-2"><span class="required pr-1">*</span>Amount Paid</legend>
+            <p class="lead">Enter the number of each type of currency received from the customer</p>
+
+            <div class="container-fluid d-flex flex-wrap">
+              <div class="form-group mb-2 d-flex">
+                <label for="penny_paid" class="col-form-label mr-3">Penny</label>
+                <input type="text" id="penny_paid" class="form-control" maxlength="3" placeholder="0">
               </div>
-            </div>  <!-- End .row -->
-          </div>  <!-- End .container-fluid -->
+              <div class="form-group mb-2 d-flex">
+                <label for="nickel_paid" class="col-form-label mr-3">Nickel</label>
+                <input type="text" id="nickel_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="dime_paid" class="col-form-label mr-3">Dime</label>
+                <input type="text" id="dime_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="quarter_paid" class="col-form-label mr-3">Quarter</label>
+                <input type="text" id="quarter_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="one_paid" class="col-form-label mr-3">One</label>
+                <input type="text" id="one_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="five_paid" class="col-form-label mr-3">Five</label>
+                <input type="text" id="five_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="ten_paid" class="col-form-label mr-3 text-align-right">Ten</label>
+                <input type="text" id="ten_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="twenty_paid" class="col-form-label mr-3">Twenty</label>
+                <input type="text" id="twenty_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+              <div class="form-group mb-2 d-flex">
+                <label for="hundred_paid" class="col-form-label mr-3">Hundred</label>
+                <input type="text" id="hundred_paid" class="form-control" maxlength="3" placeholder="0">
+              </div>
+            </div>  <!-- End .container-fluid .d-flex .flex-wrap -->
+
+            <p class="mt-3">Total Amount Paid: <span id="cash_paid"></span></p>
+          </fieldset>  <!-- End #paid_fieldset -->
 
           <button type="submit" id="calculate" class="btn btn-primary">Calculate Change</button>
         </form>  <!-- End .form-inline -->
